@@ -122,7 +122,8 @@ for tool_call in assistant_message.tool_calls:
 *The loop should stop when: (a) the LLM returns a response with no tool calls, OR (b) the MAX_TOOL_ROUNDS limit is reached. Describe how you will detect each condition and what you will return in each case.*
 
 ```
-[your answer here]
+(a) Detection for LLM to stop if not tool ID is produced. 
+(b)  Detection for  MAX_TOOL_ROUNDS once the counter has reached the desired count 
 ```
 
 ---
