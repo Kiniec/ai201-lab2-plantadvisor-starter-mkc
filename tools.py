@@ -19,6 +19,15 @@ _MONTH_TO_SEASON = {
     9: "fall",  10: "fall",  11: "fall",
 }
 
+# Reverse lookup: any lowercase name/alias -> slug. Built once at import time.
+# Priority: slug > display_name > alias (later writes win, so insert alias first).
+_name_lookup: dict[str, str] = {}
+for _slug, _data in _plant_db.items():
+    for _alias in _data["aliases"]:
+        _name_lookup.setdefault(_alias.lower(), _slug)
+    _name_lookup[_data["display_name"].lower()] = _slug
+    _name_lookup[_slug.lower()] = _slug
+
 
 def lookup_plant(plant_name: str) -> dict:
     """
@@ -52,10 +61,18 @@ def lookup_plant(plant_name: str) -> dict:
 
     Before writing code, complete the lookup_plant section of specs/tool-functions-spec.md.
     """
+    normalized = plant_name.strip().lower()
+    slug = _name_lookup.get(normalized)
+    if slug:
+        return {"found": True, "plant": _plant_db[slug]}
     return {
         "found": False,
-        "name": plant_name,
-        "message": "Plant lookup not yet implemented. Complete Milestone 1.",
+        "name": normalized,
+        "message": (
+            f"I don't recognize '{plant_name.strip()}' in the plant database. "
+            "Try the common name, scientific name, or an alias (e.g. \"devil's ivy\" for pothos). "
+            "If unsure of the name, describe what the plant looks like and I'll try to identify it."
+        ),
     }
 
 
